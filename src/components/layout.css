@@ -7,6 +7,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+a {
+  color: inherit;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
@@ -22,49 +26,6 @@ body {
   width: 1200px;
   max-width: 100%;
   margin: 0 auto;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.rv-xy-plot__axis__tick__text {
-  font-size: 10px;
-}
-
-.rv-xy-plot__axis--vertical .plot__axis__tick__text {
-  transform: translate(-5px, 0);
 }
 
 @media (max-width: 710px) {

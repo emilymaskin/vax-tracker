@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, css } from 'aphrodite/no-important';
 import axios from 'axios';
+import pp from 'papaparse';
 import dayjs from 'dayjs';
 import utc from 'dayjs-plugin-utc';
 import Chart from '../components/Chart';
 import Helmet from 'react-helmet';
 import { widths } from '../utils/constants';
 import '../components/layout.css';
+import { colors } from '../utils/constants';
 
 dayjs.extend(utc);
 
@@ -15,9 +17,9 @@ const baseUrl = 'https://covid.ourworldindata.org/data';
 const IndexPage = () => {
   const [countries, setCountries] = useState(null);
   const [time, setTime] = useState(null);
-  const [latest, setLatest] = useState(null);
 
   useEffect(() => {
+    const countryObj = {};
     const getInitialData = async () => {
       const timeStamp = await axios.get(
         `${baseUrl}/owid-covid-data-last-updated-timestamp.txt`
@@ -25,33 +27,34 @@ const IndexPage = () => {
       setTime(
         dayjs.utc(timeStamp.data).local().format('h:mm a dddd, MMMM D, YYYY')
       );
-
-      const latest = await axios.get(
-        `${baseUrl}/latest/owid-covid-latest.json`
-      );
-      const latestObj = {};
-
-      Object.keys(latest.data)
-        .filter((key) => !!latest.data[key].total_vaccinations)
-        .map((key) => (latestObj[key] = latest.data[key]));
-      setLatest(latestObj);
+      pp.parse(`${baseUrl}/vaccinations/vaccinations.csv`, {
+        header: true,
+        delimiter: ',',
+        worker: true,
+        download: true,
+        complete(results) {
+          results.data
+            .filter((r) => !!r.iso_code)
+            .map((r) => {
+              console.log(r);
+              if (countryObj[r.iso_code]) {
+                countryObj[r.iso_code].data.push(r);
+              } else {
+                countryObj[r.iso_code] = { data: [r] };
+              }
+            });
+          setCountries(countryObj);
+        },
+      });
     };
 
     getInitialData();
   }, []);
 
-  useEffect(() => {
-    if (latest) {
-      const getFullData = async () => {
-        const { data } = await axios.get(`${baseUrl}/owid-covid-data.json`);
-        setCountries(data);
-      };
-      getFullData();
-    }
-  }, [latest]);
-
   const formatNumber = (num) =>
     num ? num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '0';
+
+  const getLastEntry = (country) => country.data[country.data.length - 1] || {};
 
   return (
     <div className="App">
@@ -67,23 +70,46 @@ const IndexPage = () => {
         Information courtesy of{' '}
         <a href="https://ourworldindata.org/">Our World In Data</a>
       </p>
-      {latest && (
+      <div className={css(styles.legend)}>
+        <div className={css(styles.legendRow)}>
+          <div
+            className={css(styles.swatch)}
+            style={{ backgroundColor: colors.teal }}
+          />{' '}
+          <div>Total vaccines administered</div>
+        </div>
+        <div className={css(styles.legendRow)}>
+          <div
+            className={css(styles.swatch)}
+            style={{ backgroundColor: colors.purple }}
+          />{' '}
+          <div>Total people vaccinated</div>
+        </div>
+      </div>
+      {countries && (
         <>
           <div className={css(styles.countryChart, styles.large)}>
             <Chart countryCode="OWID_WRL" countries={countries} />
             <h3 className={css(styles.h3)}>
-              Worldwide ({formatNumber(latest.OWID_WRL.total_vaccinations)})
+              Worldwide (
+              {formatNumber(
+                getLastEntry(countries.OWID_WRL).total_vaccinations
+              )}
+              )
             </h3>
           </div>
           <div className={css(styles.countryCharts)}>
-            {Object.keys(latest)
+            {Object.keys(countries)
               .filter((key) => key !== 'OWID_WRL')
-              .map((countryCode, index) => (
+              .map((c, index) => (
                 <div className={css(styles.countryChart)} key={index}>
-                  <Chart countryCode={countryCode} countries={countries} />
+                  <Chart countryCode={c} countries={countries} />
                   <h3 className={css(styles.h3)}>
-                    {latest[countryCode].location} (
-                    {formatNumber(latest[countryCode].total_vaccinations)})
+                    {getLastEntry(countries[c]).location} (
+                    {formatNumber(
+                      getLastEntry(countries[c]).total_vaccinations
+                    )}
+                    )
                   </h3>
                 </div>
               ))}
@@ -147,5 +173,19 @@ const styles = StyleSheet.create({
     [`@media ${widths.mobile}`]: {
       fontSize: 18,
     },
+  },
+  swatch: {
+    width: 20,
+    height: 20,
+    marginRight: 5,
+    border: '1px solid #eee',
+  },
+  legend: {
+    display: 'inline-block',
+  },
+  legendRow: {
+    display: 'flex',
+    marginBottom: 10,
+    alignItems: 'center',
   },
 });
