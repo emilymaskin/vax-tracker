@@ -1,0 +1,30 @@
+{
+  "name": "vax",
+  "version": "1.0.0",
+  "private": true,
+  "description": "vax",
+  "author": "Emily Maskin",
+  "keywords": [
+    "gatsby"
+  ],
+  "scripts": {
+    "develop": "gatsby develop",
+    "start": "gatsby develop",
+    "build": "gatsby build",
+    "serve": "gatsby serve",
+    "clean": "gatsby clean"
+  },
+  "dependencies": {
+    "aphrodite": "^2.4.0",
+    "axios": "^0.21.1",
+    "dayjs": "^1.10.4",
+    "dayjs-plugin-utc": "^0.1.2",
+    "gatsby": "^2.26.1",
+    "gatsby-plugin-react-helmet": "^3.9.0",
+    "gatsby-plugin-sitemap": "^2.11.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-helmet": "^6.1.0",
+    "react-vis": "^1.11.7"
+  }
+}
