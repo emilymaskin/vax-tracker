@@ -36,7 +36,6 @@ const IndexPage = () => {
           results.data
             .filter((r) => !!r.iso_code)
             .map((r) => {
-              console.log(r);
               if (countryObj[r.iso_code]) {
                 countryObj[r.iso_code].data.push(r);
               } else {
