@@ -47,7 +47,7 @@ const formatNumber = (num) =>
         .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
     : '0';
 
-const getLastEntry = (country) => country.data[country.data.length - 1] || {};
+const getLastEntry = (obj) => obj.data[obj.data.length - 1] || {};
 
 const Chart = ({ name, list, large }) => (
   <div className={css(styles.wrapper)}>

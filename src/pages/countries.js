@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, css } from 'aphrodite/no-important';
 import pp from 'papaparse';
 import Chart from '../components/Chart';
-import Header from '../components/Header';
-import { baseUrl, widths } from '../utils/constants';
+import Layout from '../components/Layout';
+import { baseUrl } from '../utils/constants';
 import '../components/layout.css';
 
 const CountriesPage = () => {
-  const [countries, setCountries] = useState(null);
+  const [data, setData] = useState(null);
 
   useEffect(() => {
     const countryObj = {};
@@ -27,7 +26,7 @@ const CountriesPage = () => {
                 countryObj[r.location] = { data: [r] };
               }
             });
-          setCountries(countryObj);
+          setData(countryObj);
         },
       });
     };
@@ -36,32 +35,13 @@ const CountriesPage = () => {
   }, []);
 
   return (
-    <div className="App">
-      <Header />
-      {countries && (
-        <div className={css(styles.charts)}>
-          {Object.keys(countries)
-            .filter((key) => key !== 'World')
-            .map((c, index) => (
-              <Chart name={c} list={countries} key={index} />
-            ))}
-        </div>
-      )}
-    </div>
+    <Layout>
+      {data &&
+        Object.keys(data)
+          .filter((key) => key !== 'World')
+          .map((c, index) => <Chart name={c} list={data} key={index} />)}
+    </Layout>
   );
 };
 
 export default CountriesPage;
-
-const styles = StyleSheet.create({
-  charts: {
-    width: '100%',
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    margin: 'auto',
-    [`@media ${widths.device}`]: {
-      width: '100%',
-    },
-  },
-});

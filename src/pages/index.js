@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import pp from 'papaparse';
-import Header from '../components/Header';
 import Chart from '../components/Chart';
+import Layout from '../components/Layout';
 import '../components/layout.css';
 import { baseUrl } from '../utils/constants';
 
 const IndexPage = () => {
-  const [countries, setCountries] = useState(null);
+  const [data, setData] = useState(null);
 
   useEffect(() => {
     const countryObj = {};
@@ -26,7 +26,7 @@ const IndexPage = () => {
                 countryObj[r.location] = { data: [r] };
               }
             });
-          setCountries(countryObj);
+          setData(countryObj);
         },
       });
     };
@@ -34,12 +34,7 @@ const IndexPage = () => {
     getInitialData();
   }, []);
 
-  return (
-    <div className="App">
-      <Header />
-      {countries && <Chart name="World" list={countries} large />}
-    </div>
-  );
+  return <Layout>{data && <Chart name="World" list={data} large />}</Layout>;
 };
 
 export default IndexPage;

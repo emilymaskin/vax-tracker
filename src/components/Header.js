@@ -57,8 +57,17 @@ const Header = () => {
         </div>
       </div>
       <div>
-        <Link to="/">Home</Link> | <Link to="/countries">View by country</Link>{' '}
-        | <Link to="/states">View by state (USA)</Link>
+        <Link to="/" activeClassName={css(styles.current)}>
+          Home
+        </Link>{' '}
+        |{' '}
+        <Link to="/countries" activeClassName={css(styles.current)}>
+          View by country
+        </Link>{' '}
+        |{' '}
+        <Link to="/states" activeClassName={css(styles.current)}>
+          View by state (USA)
+        </Link>
       </div>
     </div>
   );
@@ -92,5 +101,8 @@ const styles = StyleSheet.create({
     display: 'flex',
     marginBottom: 10,
     alignItems: 'center',
+  },
+  current: {
+    fontWeight: 'bold',
   },
 });

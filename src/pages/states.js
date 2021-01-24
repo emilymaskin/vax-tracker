@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, css } from 'aphrodite/no-important';
 import pp from 'papaparse';
 import Chart from '../components/Chart';
-import Header from '../components/Header';
-import { baseUrl, widths } from '../utils/constants';
+import Layout from '../components/Layout';
+import { baseUrl } from '../utils/constants';
 import '../components/layout.css';
 
 const StatesPage = () => {
-  const [states, setStates] = useState(null);
+  const [data, setData] = useState(null);
 
   useEffect(() => {
     const countryObj = {};
@@ -27,7 +26,7 @@ const StatesPage = () => {
                 countryObj[r.location] = { data: [r] };
               }
             });
-          setStates(countryObj);
+          setData(countryObj);
         },
       });
     };
@@ -36,30 +35,13 @@ const StatesPage = () => {
   }, []);
 
   return (
-    <div className="App">
-      <Header />
-      {states && (
-        <div className={css(styles.charts)}>
-          {Object.keys(states).map((c, index) => (
-            <Chart name={c} list={states} key={index} />
-          ))}
-        </div>
-      )}
-    </div>
+    <Layout>
+      {data &&
+        Object.keys(data).map((c, index) => (
+          <Chart name={c} list={data} key={index} />
+        ))}
+    </Layout>
   );
 };
 
 export default StatesPage;
-
-const styles = StyleSheet.create({
-  charts: {
-    width: '100%',
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    margin: 'auto',
-    [`@media ${widths.device}`]: {
-      width: '100%',
-    },
-  },
-});
