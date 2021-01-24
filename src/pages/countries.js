@@ -5,10 +5,11 @@ import '../components/layout.css';
 
 const CountriesPage = ({ pageContext: { res } }) => (
   <Layout>
-    {res &&
-      Object.keys(res)
-        .filter((key) => key !== 'World')
-        .map((c, index) => <Chart name={c} list={res} key={index} />)}
+    {Object.keys(res)
+      .filter((key) => key !== 'World')
+      .map((c, index) => (
+        <Chart name={c} list={res} key={index} />
+      ))}
   </Layout>
 );
 

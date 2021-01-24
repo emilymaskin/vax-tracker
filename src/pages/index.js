@@ -4,7 +4,9 @@ import Layout from '../components/Layout';
 import '../components/layout.css';
 
 const IndexPage = ({ pageContext: { res } }) => (
-  <Layout>{res && <Chart name="World" list={res} large />}</Layout>
+  <Layout>
+    <Chart name="World" list={res} large />
+  </Layout>
 );
 
 export default IndexPage;

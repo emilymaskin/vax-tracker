@@ -5,10 +5,9 @@ import '../components/layout.css';
 
 const StatesPage = ({ pageContext: { res } }) => (
   <Layout>
-    {res &&
-      Object.keys(res).map((c, index) => (
-        <Chart name={c} list={res} key={index} />
-      ))}
+    {Object.keys(res).map((c, index) => (
+      <Chart name={c} list={res} key={index} />
+    ))}
   </Layout>
 );
 
