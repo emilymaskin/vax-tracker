@@ -10,27 +10,12 @@ import {
 import { colors, widths } from '../utils/constants';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
-const getTotalVaccines = (name, list) => {
+const getTotal = (key, name, list) => {
   let prevDay = 0;
 
   return list[name].data.map((day, index) => {
-    if (day.total_vaccinations) {
-      prevDay = day.total_vaccinations;
-    }
-
-    return {
-      x: index,
-      y: prevDay / 1000000,
-    };
-  });
-};
-
-const getTotalPeople = (name, list) => {
-  let prevDay = 0;
-
-  return list[name].data.map((day, index) => {
-    if (day.total_vaccinations) {
-      prevDay = day.people_vaccinated;
+    if (day[key]) {
+      prevDay = day[key];
     }
 
     return {
@@ -63,11 +48,11 @@ const Chart = ({ name, list, large }) => (
           <XYPlot width={width} height={height}>
             <HorizontalGridLines />
             <LineSeries
-              data={getTotalPeople(name, list)}
+              data={getTotal('people_vaccinated', name, list)}
               color={colors.purple}
             />
             <LineSeries
-              data={getTotalVaccines(name, list)}
+              data={getTotal('total_vaccinations', name, list)}
               color={colors.teal}
             />
             <XAxis title="Days since first recorded dose" />
