@@ -7,9 +7,8 @@ import dayjs from 'dayjs';
 import utc from 'dayjs-plugin-utc';
 import Chart from '../components/Chart';
 import Helmet from 'react-helmet';
-import { widths } from '../utils/constants';
+import { colors, widths } from '../utils/constants';
 import '../components/layout.css';
-import { colors } from '../utils/constants';
 
 dayjs.extend(utc);
 
@@ -35,12 +34,12 @@ const IndexPage = () => {
         download: true,
         complete(results) {
           results.data
-            .filter((r) => !!r.iso_code)
+            .filter((r) => !!r.location)
             .map((r) => {
-              if (countryObj[r.iso_code]) {
-                countryObj[r.iso_code].data.push(r);
+              if (countryObj[r.location]) {
+                countryObj[r.location].data.push(r);
               } else {
-                countryObj[r.iso_code] = { data: [r] };
+                countryObj[r.location] = { data: [r] };
               }
             });
           setCountries(countryObj);
@@ -50,15 +49,6 @@ const IndexPage = () => {
 
     getInitialData();
   }, []);
-
-  const formatNumber = (num) =>
-    num
-      ? parseInt(num, 10)
-          .toString()
-          .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-      : '0';
-
-  const getLastEntry = (country) => country.data[country.data.length - 1] || {};
 
   return (
     <div className="App">
@@ -97,28 +87,7 @@ const IndexPage = () => {
           <Link to="/states">View by state (USA)</Link>
         </div>
       </div>
-      {countries && (
-        <>
-          <div className={css(styles.countryChart, styles.large)}>
-            <h3 className={css(styles.h3)}>Worldwide</h3>
-            <p>
-              <b>
-                {formatNumber(
-                  getLastEntry(countries.OWID_WRL).total_vaccinations
-                )}
-              </b>{' '}
-              vaccines given to{' '}
-              <b>
-                {formatNumber(
-                  getLastEntry(countries.OWID_WRL).people_vaccinated
-                )}
-              </b>{' '}
-              people
-            </p>
-            <Chart countryCode="OWID_WRL" countries={countries} />
-          </div>
-        </>
-      )}
+      {countries && <Chart name="World" list={countries} large />}
     </div>
   );
 };
@@ -140,46 +109,10 @@ const styles = StyleSheet.create({
       width: '100%',
     },
   },
-  countryChart: {
-    height: 280,
-    width: 'calc(50% - 45px)',
-    margin: '80px 0',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    [`@media ${widths.tablet}`]: {
-      margin: '30px 0',
-      height: 230,
-      width: 'calc(50% - 30px)',
-    },
-    [`@media ${widths.mobile}`]: {
-      height: 230,
-      width: '100%',
-    },
-  },
-  large: {
-    width: 900,
-    height: 500,
-    margin: '45px auto',
-    [`@media ${widths.tablet}`]: {
-      width: '100%',
-      height: 400,
-    },
-    [`@media ${widths.mobile}`]: {
-      width: '100%',
-      height: 230,
-    },
-  },
   h2: {
     fontSize: 20,
     [`@media ${widths.mobile}`]: {
       fontSize: 20,
-    },
-  },
-  h3: {
-    marginBottom: 0,
-    [`@media ${widths.mobile}`]: {
-      fontSize: 18,
     },
   },
   swatch: {

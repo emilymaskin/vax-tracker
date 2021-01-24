@@ -50,15 +50,6 @@ const StatesPage = () => {
     getInitialData();
   }, []);
 
-  const formatNumber = (num) =>
-    num
-      ? parseInt(num, 10)
-          .toString()
-          .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-      : '0';
-
-  const getLastEntry = (country) => country.data[country.data.length - 1] || {};
-
   return (
     <div className="App">
       <Helmet>
@@ -93,30 +84,11 @@ const StatesPage = () => {
         </div>
       </div>
       {states && (
-        <>
-          <div className={css(styles.countryCharts)}>
-            {Object.keys(states)
-              .filter((key) => key !== 'OWID_WRL')
-              .map((c, index) => (
-                <div className={css(styles.countryChart)} key={index}>
-                  <h3 className={css(styles.h3)}>
-                    {getLastEntry(states[c]).location}
-                  </h3>
-                  <p>
-                    <b>
-                      {formatNumber(getLastEntry(states[c]).total_vaccinations)}
-                    </b>{' '}
-                    vaccines given to{' '}
-                    <b>
-                      {formatNumber(getLastEntry(states[c]).people_vaccinated)}
-                    </b>{' '}
-                    people
-                  </p>
-                  <Chart countryCode={c} countries={states} />
-                </div>
-              ))}
-          </div>
-        </>
+        <div className={css(styles.charts)}>
+          {Object.keys(states).map((c, index) => (
+            <Chart name={c} list={states} key={index} />
+          ))}
+        </div>
       )}
     </div>
   );
@@ -129,7 +101,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 40,
   },
-  countryCharts: {
+  charts: {
     width: '100%',
     display: 'flex',
     flexWrap: 'wrap',
@@ -139,46 +111,10 @@ const styles = StyleSheet.create({
       width: '100%',
     },
   },
-  countryChart: {
-    height: 280,
-    width: 'calc(50% - 45px)',
-    margin: '80px 0',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    [`@media ${widths.tablet}`]: {
-      margin: '30px 0',
-      height: 230,
-      width: 'calc(50% - 30px)',
-    },
-    [`@media ${widths.mobile}`]: {
-      height: 230,
-      width: '100%',
-    },
-  },
-  large: {
-    width: 900,
-    height: 500,
-    margin: '45px auto',
-    [`@media ${widths.tablet}`]: {
-      width: '100%',
-      height: 400,
-    },
-    [`@media ${widths.mobile}`]: {
-      width: '100%',
-      height: 230,
-    },
-  },
   h2: {
     fontSize: 20,
     [`@media ${widths.mobile}`]: {
       fontSize: 20,
-    },
-  },
-  h3: {
-    marginBottom: 0,
-    [`@media ${widths.mobile}`]: {
-      fontSize: 18,
     },
   },
   swatch: {
