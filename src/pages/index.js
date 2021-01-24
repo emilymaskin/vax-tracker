@@ -3,7 +3,7 @@ import Chart from '../components/Chart';
 import Layout from '../components/Layout';
 import '../components/layout.css';
 
-const IndexPage = ({ pageContext: { res, time } }) => (
+const IndexPage = ({ pageContext: { res } }) => (
   <Layout>{res && <Chart name="World" list={res} large />}</Layout>
 );
 
