@@ -52,7 +52,7 @@ const Chart = ({ countryCode, countries }) => (
           data={getTotalVaccines(countryCode, countries)}
           color={colors.teal}
         />
-        <XAxis title="Days since first dose" />
+        <XAxis title="Days since first recorded dose" />
         <YAxis title="Vaccines (in millions)" />
       </XYPlot>
     )}

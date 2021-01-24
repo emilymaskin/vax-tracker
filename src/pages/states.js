@@ -14,8 +14,8 @@ dayjs.extend(utc);
 
 const baseUrl = 'https://covid.ourworldindata.org/data';
 
-const IndexPage = () => {
-  const [countries, setCountries] = useState(null);
+const StatesPage = () => {
+  const [states, setStates] = useState(null);
   const [time, setTime] = useState(null);
 
   useEffect(() => {
@@ -27,22 +27,22 @@ const IndexPage = () => {
       setTime(
         dayjs.utc(timeStamp.data).local().format('h:mm a dddd, MMMM D, YYYY')
       );
-      pp.parse(`${baseUrl}/vaccinations/vaccinations.csv`, {
+      pp.parse(`${baseUrl}/vaccinations/us_state_vaccinations.csv`, {
         header: true,
         delimiter: ',',
         worker: true,
         download: true,
         complete(results) {
           results.data
-            .filter((r) => !!r.iso_code)
+            .filter((r) => !!r.location)
             .map((r) => {
-              if (countryObj[r.iso_code]) {
-                countryObj[r.iso_code].data.push(r);
+              if (countryObj[r.location]) {
+                countryObj[r.location].data.push(r);
               } else {
-                countryObj[r.iso_code] = { data: [r] };
+                countryObj[r.location] = { data: [r] };
               }
             });
-          setCountries(countryObj);
+          setStates(countryObj);
         },
       });
     };
@@ -92,49 +92,27 @@ const IndexPage = () => {
           </div>
         </div>
       </div>
-      {countries && (
+      {states && (
         <>
-          <div className={css(styles.countryChart, styles.large)}>
-            <h3 className={css(styles.h3)}>Worldwide</h3>
-            <p>
-              <b>
-                {formatNumber(
-                  getLastEntry(countries.OWID_WRL).total_vaccinations
-                )}
-              </b>{' '}
-              vaccines given to{' '}
-              <b>
-                {formatNumber(
-                  getLastEntry(countries.OWID_WRL).people_vaccinated
-                )}
-              </b>{' '}
-              people
-            </p>
-            <Chart countryCode="OWID_WRL" countries={countries} />
-          </div>
           <div className={css(styles.countryCharts)}>
-            {Object.keys(countries)
+            {Object.keys(states)
               .filter((key) => key !== 'OWID_WRL')
               .map((c, index) => (
                 <div className={css(styles.countryChart)} key={index}>
                   <h3 className={css(styles.h3)}>
-                    {getLastEntry(countries[c]).location}
+                    {getLastEntry(states[c]).location}
                   </h3>
                   <p>
                     <b>
-                      {formatNumber(
-                        getLastEntry(countries[c]).total_vaccinations
-                      )}
+                      {formatNumber(getLastEntry(states[c]).total_vaccinations)}
                     </b>{' '}
                     vaccines given to{' '}
                     <b>
-                      {formatNumber(
-                        getLastEntry(countries[c]).people_vaccinated
-                      )}
+                      {formatNumber(getLastEntry(states[c]).people_vaccinated)}
                     </b>{' '}
                     people
                   </p>
-                  <Chart countryCode={c} countries={countries} />
+                  <Chart countryCode={c} countries={states} />
                 </div>
               ))}
           </div>
@@ -144,7 +122,7 @@ const IndexPage = () => {
   );
 };
 
-export default IndexPage;
+export default StatesPage;
 
 const styles = StyleSheet.create({
   header: {
