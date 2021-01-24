@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, css } from 'aphrodite/no-important';
-import { Link } from 'gatsby';
 import axios from 'axios';
 import pp from 'papaparse';
 import dayjs from 'dayjs';
@@ -15,7 +14,7 @@ dayjs.extend(utc);
 
 const baseUrl = 'https://covid.ourworldindata.org/data';
 
-const IndexPage = () => {
+const CountriesPage = () => {
   const [countries, setCountries] = useState(null);
   const [time, setTime] = useState(null);
 
@@ -35,12 +34,12 @@ const IndexPage = () => {
         download: true,
         complete(results) {
           results.data
-            .filter((r) => !!r.iso_code)
+            .filter((r) => !!r.location)
             .map((r) => {
-              if (countryObj[r.iso_code]) {
-                countryObj[r.iso_code].data.push(r);
+              if (countryObj[r.location]) {
+                countryObj[r.location].data.push(r);
               } else {
-                countryObj[r.iso_code] = { data: [r] };
+                countryObj[r.location] = { data: [r] };
               }
             });
           setCountries(countryObj);
@@ -92,30 +91,34 @@ const IndexPage = () => {
             <div>Total people vaccinated</div>
           </div>
         </div>
-        <div>
-          <Link to="/countries">View by country</Link> |{' '}
-          <Link to="/states">View by state (USA)</Link>
-        </div>
       </div>
       {countries && (
         <>
-          <div className={css(styles.countryChart, styles.large)}>
-            <h3 className={css(styles.h3)}>Worldwide</h3>
-            <p>
-              <b>
-                {formatNumber(
-                  getLastEntry(countries.OWID_WRL).total_vaccinations
-                )}
-              </b>{' '}
-              vaccines given to{' '}
-              <b>
-                {formatNumber(
-                  getLastEntry(countries.OWID_WRL).people_vaccinated
-                )}
-              </b>{' '}
-              people
-            </p>
-            <Chart countryCode="OWID_WRL" countries={countries} />
+          <div className={css(styles.countryCharts)}>
+            {Object.keys(countries)
+              .filter((key) => key !== 'World')
+              .map((c, index) => (
+                <div className={css(styles.countryChart)} key={index}>
+                  <h3 className={css(styles.h3)}>
+                    {getLastEntry(countries[c]).location}
+                  </h3>
+                  <p>
+                    <b>
+                      {formatNumber(
+                        getLastEntry(countries[c]).total_vaccinations
+                      )}
+                    </b>{' '}
+                    vaccines given to{' '}
+                    <b>
+                      {formatNumber(
+                        getLastEntry(countries[c]).people_vaccinated
+                      )}
+                    </b>{' '}
+                    people
+                  </p>
+                  <Chart countryCode={c} countries={countries} />
+                </div>
+              ))}
           </div>
         </>
       )}
@@ -123,7 +126,7 @@ const IndexPage = () => {
   );
 };
 
-export default IndexPage;
+export default CountriesPage;
 
 const styles = StyleSheet.create({
   header: {
@@ -191,7 +194,6 @@ const styles = StyleSheet.create({
   legend: {
     display: 'inline-block',
     marginTop: 20,
-    marginBottom: 20,
   },
   legendRow: {
     display: 'flex',
