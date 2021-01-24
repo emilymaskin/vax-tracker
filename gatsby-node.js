@@ -24,9 +24,19 @@ exports.onCreatePage = ({ page, actions }) => {
     .on('end', () => {
       results.map((r) => {
         if (res[r.location]) {
-          res[r.location].data.push(r);
+          res[r.location].data.push({
+            total_vaccinations: r.total_vaccinations,
+            people_vaccinated: r.people_vaccinated,
+          });
         } else {
-          res[r.location] = { data: [r] };
+          res[r.location] = {
+            data: [
+              {
+                total_vaccinations: r.total_vaccinations,
+                people_vaccinated: r.people_vaccinated,
+              },
+            ],
+          };
         }
       });
 
