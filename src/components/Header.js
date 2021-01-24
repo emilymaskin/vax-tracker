@@ -5,7 +5,7 @@ import Helmet from 'react-helmet';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import utc from 'dayjs-plugin-utc';
-import { baseUrl, colors, widths } from '../utils/constants';
+import { colors, widths } from '../utils/constants';
 
 dayjs.extend(utc);
 
@@ -15,7 +15,7 @@ const Header = () => {
   useEffect(() => {
     const getInitialData = async () => {
       const timeStamp = await axios.get(
-        `${baseUrl}/owid-covid-data-last-updated-timestamp.txt`
+        'https://covid.ourworldindata.org/data/owid-covid-data-last-updated-timestamp.txt'
       );
       setTime(
         dayjs.utc(timeStamp.data).local().format('h:mm a dddd, MMMM D, YYYY')
