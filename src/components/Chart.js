@@ -1,13 +1,13 @@
 import React from 'react';
-import { StyleSheet, css } from 'aphrodite/no-important';
 import {
-  FlexibleXYPlot,
+  XYPlot,
   XAxis,
   YAxis,
   HorizontalGridLines,
   LineSeries,
 } from 'react-vis';
 import { colors } from '../utils/constants';
+import AutoSizer from 'react-virtualized-auto-sizer';
 
 const getTotalVaccines = (countryCode, countries) => {
   let prevDay = 0;
@@ -40,33 +40,23 @@ const getTotalPeople = (countryCode, countries) => {
 };
 
 const Chart = ({ countryCode, countries }) => (
-  <div className={css(styles.loading)}>
-    <FlexibleXYPlot>
-      <HorizontalGridLines />
-      <LineSeries
-        data={getTotalPeople(countryCode, countries)}
-        color={colors.purple}
-      />
-      <LineSeries
-        data={getTotalVaccines(countryCode, countries)}
-        color={colors.teal}
-      />
-      <XAxis title="Days since first dose" />
-      <YAxis title="Vaccines (in millions)" />
-    </FlexibleXYPlot>
-  </div>
+  <AutoSizer>
+    {({ width, height }) => (
+      <XYPlot width={width} height={height}>
+        <HorizontalGridLines />
+        <LineSeries
+          data={getTotalPeople(countryCode, countries)}
+          color={colors.purple}
+        />
+        <LineSeries
+          data={getTotalVaccines(countryCode, countries)}
+          color={colors.teal}
+        />
+        <XAxis title="Days since first dose" />
+        <YAxis title="Vaccines (in millions)" />
+      </XYPlot>
+    )}
+  </AutoSizer>
 );
 
 export default Chart;
-
-const styles = StyleSheet.create({
-  loading: {
-    height: '100%',
-    width: '100%',
-    border: '1px solid #eee',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-  },
-});

@@ -63,53 +63,73 @@ const IndexPage = () => {
           href="https://unpkg.com/react-vis/dist/style.css"
         />
       </Helmet>
-      <h1>Covid-19 vaccinations administered</h1>
-      {time && <h2 className={css(styles.h2)}>Last updated at {time}</h2>}
-      <p>
-        Information courtesy of{' '}
-        <a href="https://ourworldindata.org/">Our World In Data</a>
-      </p>
-      <div className={css(styles.legend)}>
-        <div className={css(styles.legendRow)}>
-          <div
-            className={css(styles.swatch)}
-            style={{ backgroundColor: colors.teal }}
-          />{' '}
-          <div>Total vaccines administered</div>
-        </div>
-        <div className={css(styles.legendRow)}>
-          <div
-            className={css(styles.swatch)}
-            style={{ backgroundColor: colors.purple }}
-          />{' '}
-          <div>Total people vaccinated</div>
+      <div className={css(styles.header)}>
+        <h1>Covid-19 vaccine tracker</h1>
+        {time && <h2 className={css(styles.h2)}>Last updated at {time}</h2>}
+        <p>
+          Information courtesy of{' '}
+          <a href="https://ourworldindata.org/">Our World In Data</a>
+        </p>
+        <div className={css(styles.legend)}>
+          <div className={css(styles.legendRow)}>
+            <div
+              className={css(styles.swatch)}
+              style={{ backgroundColor: colors.teal }}
+            />{' '}
+            <div>Total vaccines administered</div>
+          </div>
+          <div className={css(styles.legendRow)}>
+            <div
+              className={css(styles.swatch)}
+              style={{ backgroundColor: colors.purple }}
+            />{' '}
+            <div>Total people vaccinated</div>
+          </div>
         </div>
       </div>
       {countries && (
         <>
           <div className={css(styles.countryChart, styles.large)}>
+            <h3 className={css(styles.h3)}>Worldwide</h3>
+            <p>
+              <b>
+                {formatNumber(
+                  getLastEntry(countries.OWID_WRL).total_vaccinations
+                )}
+              </b>{' '}
+              vaccines given to{' '}
+              <b>
+                {formatNumber(
+                  getLastEntry(countries.OWID_WRL).people_vaccinated
+                )}
+              </b>{' '}
+              people
+            </p>
             <Chart countryCode="OWID_WRL" countries={countries} />
-            <h3 className={css(styles.h3)}>
-              Worldwide (
-              {formatNumber(
-                getLastEntry(countries.OWID_WRL).total_vaccinations
-              )}
-              )
-            </h3>
           </div>
           <div className={css(styles.countryCharts)}>
             {Object.keys(countries)
               .filter((key) => key !== 'OWID_WRL')
               .map((c, index) => (
                 <div className={css(styles.countryChart)} key={index}>
-                  <Chart countryCode={c} countries={countries} />
                   <h3 className={css(styles.h3)}>
-                    {getLastEntry(countries[c]).location} (
-                    {formatNumber(
-                      getLastEntry(countries[c]).total_vaccinations
-                    )}
-                    )
+                    {getLastEntry(countries[c]).location}
                   </h3>
+                  <p>
+                    <b>
+                      {formatNumber(
+                        getLastEntry(countries[c]).total_vaccinations
+                      )}
+                    </b>{' '}
+                    vaccines given to{' '}
+                    <b>
+                      {formatNumber(
+                        getLastEntry(countries[c]).people_vaccinated
+                      )}
+                    </b>{' '}
+                    people
+                  </p>
+                  <Chart countryCode={c} countries={countries} />
                 </div>
               ))}
           </div>
@@ -122,8 +142,12 @@ const IndexPage = () => {
 export default IndexPage;
 
 const styles = StyleSheet.create({
+  header: {
+    textAlign: 'center',
+    marginBottom: 40,
+  },
   countryCharts: {
-    width: 900,
+    width: '100%',
     display: 'flex',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
@@ -135,10 +159,10 @@ const styles = StyleSheet.create({
   countryChart: {
     height: 280,
     width: 'calc(50% - 45px)',
-    margin: '45px 0',
+    margin: '80px 0',
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'flex-end',
+    alignItems: 'flex-start',
     [`@media ${widths.tablet}`]: {
       margin: '30px 0',
       height: 230,
@@ -163,12 +187,13 @@ const styles = StyleSheet.create({
     },
   },
   h2: {
+    fontSize: 20,
     [`@media ${widths.mobile}`]: {
       fontSize: 20,
     },
   },
   h3: {
-    marginTop: 10,
+    marginBottom: 0,
     [`@media ${widths.mobile}`]: {
       fontSize: 18,
     },
@@ -181,6 +206,7 @@ const styles = StyleSheet.create({
   },
   legend: {
     display: 'inline-block',
+    marginTop: 20,
   },
   legendRow: {
     display: 'flex',
