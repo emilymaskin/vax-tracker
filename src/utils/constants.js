@@ -22,3 +22,5 @@ export const colors = {
   purple: '#AA00FF',
   teal: '#79EAEA',
 };
+
+export const baseUrl = 'https://covid.ourworldindata.org/data';

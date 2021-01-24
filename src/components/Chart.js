@@ -84,6 +84,9 @@ export default Chart;
 const styles = StyleSheet.create({
   wrapper: {
     width: 'calc(50% - 45px)',
+    [`@media ${widths.mobile}`]: {
+      width: '100%',
+    },
   },
   chart: {
     height: 280,
@@ -92,13 +95,14 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'flex-start',
     [`@media ${widths.tablet}`]: {
-      margin: '30px 0',
+      marginBottom: 50,
       height: 230,
       width: 'calc(50% - 30px)',
     },
     [`@media ${widths.mobile}`]: {
       height: 230,
       width: '100%',
+      marginBottom: 40,
     },
   },
   large: {
